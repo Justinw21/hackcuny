@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@reach/combobox": "^0.18.0",
     "@react-google-maps/api": "^2.19.3",
+    "date-fns": "^3.3.1",
     "firebase": "^10.8.0",
+    "google-map-react": "^2.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.1",
