@@ -8,31 +8,24 @@ import {
   Pin,
   InfoWindow,
 } from "@vis.gl/react-google-maps";
-
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 function Intro() {
   const position = { lat: 40.7128, lng: -74.0060 };
   const [open, setOpen] = useState(false);
 
   return (
-    <APIProvider apiKey="AIzaSyCwxPwfxk2Ln1ERsqjtPOc08-gJDIrAyBg">
-      <div style={{ height: "100vh", width: "100%" }}>
-        <Map zoom={9} center={position} mapId="4d4e0bea4cc94c64">
-          <AdvancedMarker position={position} onClick={() => setOpen(true)}>
-            <Pin
-              background={"grey"}
-              borderColor={"green"}
-              glyphColor={"purple"}
-            />
-          </AdvancedMarker>
-
-          {open && (
-            <InfoWindow position={position} onCloseClick={() => setOpen(false)}>
-              <p>I'm in Hamburg</p>
-            </InfoWindow>
-          )}
-        </Map>
-      </div>
-    </APIProvider>
+    <LoadScript
+        googleMapsApiKey="AIzaSyCwxPwfxk2Ln1ERsqjtPOc08-gJDIrAyBg"
+      >
+        <GoogleMap
+          mapContainerStyle={{height: '100vh',width: '100%'}}
+          zoom={13}
+          center={position}
+          gestureHandling="greedy" // Set the gestureHandling property here
+        >
+          { /* Child components, markers, etc. */ }
+        </GoogleMap>
+      </LoadScript>
   );
 }
 export default Intro
