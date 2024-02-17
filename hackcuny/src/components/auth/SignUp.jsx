@@ -1,17 +1,22 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import React, {useState} from 'react'
 import {auth} from '../../firebase'
+import { useNavigate } from 'react-router-dom'
 import './auth.css';
 const SignUp = () => {
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
+    const navigate = useNavigate();
     const signUp = (e) =>{
         e.preventDefault();
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            console.log(userCredential)
+            console.log(userCredential);
+            alert("Sign Up Successful!");
+            navigate('/');
+            location.reload();
         }).catch((error)=>{
-            console.log(error);
+            alert("Password needs to be longer than 6 characters.")
         })
     }
     return (
