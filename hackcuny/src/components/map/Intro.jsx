@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import { useState, useRef, useEffect } from "react";
+import { GoogleMap, LoadScript, Autocomplete } from '@react-google-maps/api';
 import './intro.css'
 
 function Intro() {
@@ -21,25 +21,30 @@ function Intro() {
     }
   }, [inputRef]);
 
-  const handleChange = (event) => {
-    setPlace(event.target.value);
+  const handlePlaceChange = (event) => {
+    console.log(event.target.value);
   };
 
   return (
     <div className="map-container">
       <label htmlFor="search">Enter a place: </label>
-      <input
-        type="text"
-        id="search"
-        ref={inputRef} 
-        value={place}
-        onChange={handleChange}
-        required
-      />
       <LoadScript
         googleMapsApiKey="AIzaSyCwxPwfxk2Ln1ERsqjtPOc08-gJDIrAyBg"
         libraries={['places']}
       >
+        <Autocomplete
+          onLoad={inputRef => inputRef && (inputRef.current = inputRef)}
+          onPlaceChanged={handlePlaceChange}
+        >
+          <input
+            type="text"
+            id="search"
+            ref={inputRef}
+            value={place}
+            onChange={event => setPlace(event.target.value)}
+            required
+          />
+        </Autocomplete>
         <GoogleMap
           mapContainerStyle={{height: '90vh', width: '100%'}}
           zoom={13}
