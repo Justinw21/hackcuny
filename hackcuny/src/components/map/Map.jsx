@@ -6,7 +6,7 @@ import {
     InfoWindow
 } from "@react-google-maps/api";
 import { formatRelative, nextDay } from "date-fns";
-
+import compass from '../../assets/compass-logo.png'
 import usePlacesAutocomplete, {
     getGeocode,
     getLatLng,
@@ -162,7 +162,7 @@ function Locate({ panTo }) {
           );
         }}
       >
-        <img src="" alt="compass" />
+        <img src={compass} alt="compass" style={{width:"15%"}}/>
       </button>
     );
   }
@@ -282,13 +282,3 @@ function Form({latitude, longitude}){
     )
 }
 
-function DisplayDataPopUp({timestamp, tamponTF, padTF}){
-  //info present = true => display : "no information yet"
-  return(
-    <div>
-      <p>Tampons: {tamponTF}</p>
-      <p>Pads: {padTF}</p>
-      <p>Last Updated: {timestamp}</p>
-    </div>
-  )
-}
