@@ -20,7 +20,8 @@ import {
     ComboboxOption,
 } from "@reach/combobox";
 
-import {compass} from '../../assets/compass-logo.png'
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -68,7 +69,6 @@ export default function GMap(){
             time: new Date(),
             },
         ]);
-        setSelected(current)
       }, []);
 
     if(loadError) return "Error loading maps"
@@ -81,7 +81,7 @@ export default function GMap(){
             <br />
         <Locate panTo={panTo} />
         <Search panTo={panTo} />
-        {selected?<Form/>:null}
+        {selected?<Form latitude={selected.lat} longitude={selected.lng}/>:null}
         </div>
         <GoogleMap
         mapContainerStyle={mapContainerStyle}
@@ -191,39 +191,61 @@ function Search({ panTo }) {
     );
 }  
 
-function Form(){
-    const [tampon, setTampon] = useState('');
-    const [pad, setPad] = useState('');
+function Form(latitude, longitude){
+    const [tampon, setTampon] = useState('Yes');
+    const [pad, setPad] = useState('Yes');
     const handleTamponChange = (event) => {
         setTampon(event.target.value);
-      };
+    };
     const handlePadChange = (event) => {
-    setPad(event.target.value);
+        setPad(event.target.value);
+    };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      const collectionRef = collection(db, "addresses");
+      
+      try {
+        const entryData = {
+          tamponAnswer: tampon,
+          padAnswer: pad,
+          lat: latitude,
+          lng: longitude,
+        };
+      const docRef = await addDoc(collectionRef, entryData);
+      console.log("Review added with ID: ", docRef.id);
+
+      alert("Review submitted successfully!");
+      } catch (error) {
+      console.error("Error adding review: ", error);
+      }
     };
 
     //implement submission which sends data to firestore
     //info: user name/id + tampon answer + pad answer + lat lng
 
     return(
+      <form onSubmit = {handleSubmit}>
         <div style={{display:"flex" , flexDirection:"column" , alignItems:"center"}}>
             <h3>Submit a Review</h3>
             <div style={{display:"flex"}}>
             <h5 style={{margin:"0.5rem"}}>Tampons:</h5>
             <select value={tampon} onChange={handleTamponChange}>
-                <option value="tYes">Yes</option>
-                <option value="tNo">No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
             </select>
             </div>
             <br />
             <div style={{display:"flex"}}>
             <h5 style={{margin:"0.5rem"}}>Pads:</h5>
             <select value={pad} onChange={handlePadChange}>
-                <option value="pYes">Yes</option>
-                <option value="pNo">No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
             </select>
             </div>
             <br />
-            <button>Submit</button>
+            <button type = "submit">Submit</button>
         </div>
+      </form>
     )
 }
