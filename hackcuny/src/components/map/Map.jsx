@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
     GoogleMap,
     useLoadScript,
@@ -67,17 +67,19 @@ export default function GMap(){
             time: new Date(),
             },
         ]);
+        setSelected(current)
       }, []);
 
     if(loadError) return "Error loading maps"
     if(!isLoaded) return "Loading maps"
     return(
-        <div>
-        <h1>Pads & Tampons</h1>
+        <div style={{display:"flex"}}>
 
+        <div>
         <Locate panTo={panTo} />
         <Search panTo={panTo} />
-
+        {selected?<Form/>:null}
+        </div>
         <GoogleMap
         mapContainerStyle={mapContainerStyle}
         zoom={12}
@@ -165,7 +167,7 @@ function Search({ panTo }) {
     };
   
     return (
-      <div className="search">
+      <div className="search" style={{minWidth:"25vw"}}>
         <Combobox onSelect={handleSelect}>
           <ComboboxInput
             value={value}
@@ -174,7 +176,7 @@ function Search({ panTo }) {
             placeholder="Search your location"
           />
           <ComboboxPopover>
-            <ComboboxList>
+            <ComboboxList style={{backgroundColor:"black"}}>
               {status === "OK" &&
                 data.map(({ id, description }) => (
                   <ComboboxOption key={id} value={description} />
@@ -185,3 +187,40 @@ function Search({ panTo }) {
       </div>
     );
 }  
+
+function Form(){
+    const [tampon, setTampon] = useState('');
+    const [pad, setPad] = useState('');
+    const handleTamponChange = (event) => {
+        setTampon(event.target.value);
+      };
+    const handlePadChange = (event) => {
+    setPad(event.target.value);
+    };
+
+    //implement submission which sends data to firestore
+    //info: user name/id + tampon answer + pad answer + lat lng
+
+    return(
+        <div style={{display:"flex" , flexDirection:"column" , alignItems:"center"}}>
+            <h3>Submit a Review</h3>
+            <div style={{display:"flex"}}>
+            <h5 style={{margin:"0.5rem"}}>Tampons:</h5>
+            <select value={tampon} onChange={setTampon}>
+                <option value="tYes">Yes</option>
+                <option value="tNo">No</option>
+            </select>
+            </div>
+            <br />
+            <div style={{display:"flex"}}>
+            <h5 style={{margin:"0.5rem"}}>Pads:</h5>
+            <select value={pad} onChange={handleTamponChange}>
+                <option value="pYes">Yes</option>
+                <option value="pNo">No</option>
+            </select>
+            </div>
+            <br />
+            <button>Submit</button>
+        </div>
+    )
+}

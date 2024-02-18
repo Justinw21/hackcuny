@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { GoogleMap, LoadScript, Autocomplete } from '@react-google-maps/api';
-import './intro.css'
+
 
 function Intro() {
   const position = { lat: 40.7128, lng: -74.0060 };
