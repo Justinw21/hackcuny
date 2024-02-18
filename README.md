@@ -6,9 +6,6 @@ Menstrual products can be expensive and free ones can be hard to find. Although 
 
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
@@ -17,8 +14,6 @@ Menstrual products can be expensive and free ones can be hard to find. Although 
 - Logged in users can report whether a place is stocked with mentrual products or not
 
 ## Installation
-
-Provide instructions on how to install or set up your project.
 
 ```bash
 #fork the repository
