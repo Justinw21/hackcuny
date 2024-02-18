@@ -33,7 +33,7 @@ const center = {
 }
 export default function GMap(){
     const {isLoaded, loadError} = useLoadScript({
-        googleMapsApiKey: "AIzaSyCwxPwfxk2Ln1ERsqjtPOc08-gJDIrAyBg",
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
         libraries,
     })
 
