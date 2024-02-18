@@ -1,6 +1,6 @@
 # PadNews
 
-Menstrual products can be expensive and free ones can be hard to find. Although there have been efforts to increase accessibility to these products, more can still be done.
+Menstrual products can be expensive and free ones can be hard to find. Although there have been efforts to increase accessibility to these products, more can still be done. PadNews seeks to provide a platform for users to share as well as find information through crowdsourcing and data visualization.
 
 ## Table of Contents
 
