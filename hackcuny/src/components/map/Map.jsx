@@ -20,7 +20,7 @@ import {
     ComboboxOption,
 } from "@reach/combobox";
 
-import { addDoc, collection } from "firebase/firestore";
+import { getDocs, addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const libraries = ["places"];
@@ -37,20 +37,17 @@ export default function GMap(){
         libraries,
     })
 
-    const [markers, setMarkers] = React.useState([]);
+    const [marker, setMarker] = React.useState(null);
 
     //currently selected marker
     const [selected, setSelected] = React.useState(null);
 
     const onMapClick = React.useCallback((event)=>{
-        setMarkers((current) => [
-            ...current, 
-            {
+        setMarker({
             lat:event.latLng.lat(),
             lng:event.latLng.lng(),
             time: new Date(),
-            },
-        ]);
+        });
     },[]);
 
     const mapRef = React.useRef();
@@ -61,15 +58,45 @@ export default function GMap(){
     const panTo = React.useCallback(({ lat, lng }) => {
         mapRef.current.panTo({ lat, lng });
         mapRef.current.setZoom(14);
-        setMarkers((current) => [
-            ...current, 
-            {
+        setMarker({
             lat: lat,
             lng: lng,
             time: new Date(),
-            },
-        ]);
-      }, []);
+        });
+    }, []);
+
+    const [locationData, setLocationData] = useState(null); // State to hold the data of the clicked location
+
+
+    const [lastDateUpdate, setLastDateUpdate] = useState('');
+    const [lastTamponUpdate, setLastTamponUpdate] = useState('');
+    const [lastPadUpdate, setLastPadUpdate] = useState('');
+    const [infoFound, setInfoFound] = useState(false);
+    const onMarkerClick = async (marker) => {
+      setInfoFound(false);
+      try {
+          // Fetch location data from Firestore based on marker position
+          setSelected(marker);
+          const querySnapshot = await getDocs(collection(db, "addresses"));
+          querySnapshot.forEach((doc) => {
+              const data = doc.data();
+              // Check if the marker's position matches the location data
+              if (Math.round(data.lat) == Math.round(marker.lat) && Math.round(data.lng) == Math.round(marker.lng)) {
+                  // Set location data to be displayed
+                  setLocationData(data);
+                  const timestamp = data.date;
+                  const date = timestamp.toDate();
+                  const formattedDate = formatRelative(date, new Date());
+                  setLastDateUpdate(formattedDate);
+                  setLastPadUpdate(data.padAnswer);
+                  setLastTamponUpdate(data.tamponAnswer);
+                  setInfoFound(true);
+              }
+          });
+      } catch (error) {
+          console.error("Error fetching location data:", error);
+      }
+  };
 
     if(loadError) return "Error loading maps"
     if(!isLoaded) return "Loading maps"
@@ -81,7 +108,8 @@ export default function GMap(){
             <br />
         <Locate panTo={panTo} />
         <Search panTo={panTo} />
-        {selected?<Form latitude={selected.lat} longitude={selected.lng}/>:null}
+        {marker ? <div>
+        <Form latitude={marker.lat} longitude={marker.lng}/></div> : null}
         </div>
         <GoogleMap
         mapContainerStyle={mapContainerStyle}
@@ -90,23 +118,22 @@ export default function GMap(){
         onClick={onMapClick}
         onLoad={onMapLoad}
         >
-            {markers.map((marker) => (
-                <Marker key={marker.time.toISOString} 
-                position={{lat: marker.lat , lng:marker.lng}}
-                onClick={() => {
-                    setSelected(marker);
-                }}
+            {marker && (
+                <Marker
+                    position={{ lat: marker.lat, lng: marker.lng }}
+                    onClick={() => {
+                        
+                        onMarkerClick(marker);
+                    }}
                 />
-                
-            ))}
+            )}
 
             {selected ? (
             <InfoWindow position={{lat:selected.lat, lng:selected.lng}} onCloseClick={()=>{
                 setSelected(null);
             }}>
                 <div style={{color:"black"}}>
-                    <h2>Pad Tampon Spotted</h2>
-                    <p>Spotted {formatRelative(selected.time, new Date())}</p>
+                {infoFound?<DisplayDataPopUp timestamp={lastDateUpdate} tamponTF={lastTamponUpdate} padTF={lastPadUpdate}/>: <p>No Information Available</p>}
                 </div>
             </InfoWindow>):null}
 
@@ -191,7 +218,7 @@ function Search({ panTo }) {
     );
 }  
 
-function Form(latitude, longitude){
+function Form({latitude, longitude}){
     const [tampon, setTampon] = useState('Yes');
     const [pad, setPad] = useState('Yes');
     const handleTamponChange = (event) => {
@@ -249,4 +276,15 @@ function Form(latitude, longitude){
         </div>
       </form>
     )
+}
+
+function DisplayDataPopUp({timestamp, tamponTF, padTF}){
+  //info present = true => display : "no information yet"
+  return(
+    <div>
+      <p>Tampons: {tamponTF}</p>
+      <p>Pads: {padTF}</p>
+      <p>Last Updated: {timestamp}</p>
+    </div>
+  )
 }
