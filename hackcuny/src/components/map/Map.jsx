@@ -207,6 +207,7 @@ function Form(latitude, longitude){
       
       try {
         const entryData = {
+          date: new Date(),
           tamponAnswer: tampon,
           padAnswer: pad,
           lat: latitude,
