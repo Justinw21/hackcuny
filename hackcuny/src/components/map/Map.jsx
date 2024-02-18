@@ -20,6 +20,7 @@ import {
     ComboboxOption,
 } from "@reach/combobox";
 
+import {compass} from '../../assets/compass-logo.png'
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -76,6 +77,8 @@ export default function GMap(){
         <div style={{display:"flex"}}>
 
         <div>
+            <br />
+            <br />
         <Locate panTo={panTo} />
         <Search panTo={panTo} />
         {selected?<Form/>:null}
@@ -128,7 +131,7 @@ function Locate({ panTo }) {
           );
         }}
       >
-        <img src="/compass.svg" alt="compass" />
+        <img src="" alt="compass" />
       </button>
     );
   }
@@ -206,7 +209,7 @@ function Form(){
             <h3>Submit a Review</h3>
             <div style={{display:"flex"}}>
             <h5 style={{margin:"0.5rem"}}>Tampons:</h5>
-            <select value={tampon} onChange={setTampon}>
+            <select value={tampon} onChange={handleTamponChange}>
                 <option value="tYes">Yes</option>
                 <option value="tNo">No</option>
             </select>
@@ -214,7 +217,7 @@ function Form(){
             <br />
             <div style={{display:"flex"}}>
             <h5 style={{margin:"0.5rem"}}>Pads:</h5>
-            <select value={pad} onChange={handleTamponChange}>
+            <select value={pad} onChange={handlePadChange}>
                 <option value="pYes">Yes</option>
                 <option value="pNo">No</option>
             </select>
