@@ -73,6 +73,9 @@ export default function GMap(){
     const [lastPadUpdate, setLastPadUpdate] = useState('');
     const [infoFound, setInfoFound] = useState(false);
     const onMarkerClick = async (marker) => {
+      setLastDateUpdate('');
+      setLastPadUpdate('');
+      setLastTamponUpdate('');
       setInfoFound(false);
       try {
           // Fetch location data from Firestore based on marker position
@@ -80,9 +83,10 @@ export default function GMap(){
           const querySnapshot = await getDocs(collection(db, "addresses"));
           querySnapshot.forEach((doc) => {
               const data = doc.data();
-              // Check if the marker's position matches the location data
-              if (Math.round(data.lat) == Math.round(marker.lat) && Math.round(data.lng) == Math.round(marker.lng)) {
+              // Check if the marker's position matches the location data Math.round(value/1000)*1000
+              if (Math.round(data.lat*1000)/1000 == Math.round(marker.lat*1000)/1000 && Math.round(data.lng*1000)/1000 == Math.round(marker.lng*1000)/1000) {
                   // Set location data to be displayed
+                  console.log(Math.round(data.lat/1000)*1000)
                   setLocationData(data);
                   const timestamp = data.date;
                   const date = timestamp.toDate();
